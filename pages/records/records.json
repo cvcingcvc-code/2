@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "报名记录",
+  "usingComponents": {
+    "wx-login": "../../components/wx-login/wx-login"
+  }
+}

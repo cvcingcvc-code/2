@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "在线报名",
+  "usingComponents": {
+    "wx-login": "../../components/wx-login/wx-login"
+  }
+}

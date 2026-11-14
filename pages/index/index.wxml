@@ -1,0 +1,103 @@
+<view class="page-shell page-shell-tab">
+    <view class="hero">
+        <view class="hero-top">
+            <text class="eyebrow">ACTIVITY SIGN-UP</text>
+            <view class="session-chip" wx:if="{{signedIn}}">
+                <image class="session-icon" src="/assets/icons/ic-check.png" mode="aspectFit" />
+                <text>已登录</text>
+            </view>
+        </view>
+        <text class="hero-title">找一场想参加的活动</text>
+        <text class="hero-subtitle">面向 18-35 岁城市青年 · 报名、记录一站式完成</text>
+    </view>
+
+    <view class="login-slot" wx:if="{{sessionChecked && !signedIn}}">
+        <wx-login hint="登录后可报名、查看记录与活动图片" bind:signedin="onSignedIn" />
+    </view>
+
+    <view class="section-head">
+        <view>
+            <text class="section-title">近期活动</text>
+            <text class="section-subtitle">共 {{activeCount}} 场活动开放报名</text>
+        </view>
+        <view class="refresh-button" bindtap="handleRetry">
+            <image class="icon-sm" src="/assets/icons/ic-refresh.png" mode="aspectFit" />
+            <text>刷新</text>
+        </view>
+    </view>
+
+    <view class="state-card" wx:if="{{viewState === 'loading'}}">
+        <image class="state-icon" src="/assets/icons/ic-ticket.png" mode="aspectFit" />
+        <text class="state-title">正在加载活动</text>
+        <text class="state-description">活动信息保存在云端，马上就好。</text>
+    </view>
+
+    <view class="state-card" wx:elif="{{viewState === 'error'}}">
+        <image class="state-icon" src="/assets/icons/ic-refresh.png" mode="aspectFit" />
+        <text class="state-title">活动加载失败</text>
+        <text class="state-description">{{errorMsg}}</text>
+        <button class="retry-button" bindtap="handleRetry">重新加载</button>
+    </view>
+
+    <view class="state-card" wx:elif="{{viewState === 'empty'}}">
+        <image class="state-icon" src="/assets/icons/ic-empty.png" mode="aspectFit" />
+        <text class="state-title">暂无活动</text>
+        <text class="state-description">新的活动上线后会显示在这里。</text>
+        <button class="retry-button" bindtap="handleRetry">刷新看看</button>
+    </view>
+
+    <view wx:else>
+        <view class="activity-card card" wx:for="{{activities}}" wx:key="id" data-id="{{item.id}}" bindtap="goDetail">
+            <view class="cover">
+                <image wx:if="{{item.coverUrl !== ''}}" class="cover-image" src="{{item.coverUrl}}" mode="aspectFill" />
+                <view wx:else class="cover-placeholder">
+                    <image class="cover-mark" src="/assets/icons/ic-ticket.png" mode="aspectFit" />
+                    <text class="cover-placeholder-text">活动封面</text>
+                </view>
+                <view class="cover-tag">{{item.tag}}</view>
+            </view>
+            <view class="card-body">
+                <view class="card-title-row">
+                    <text class="card-title">{{item.title}}</text>
+                    <text class="pill" wx:if="{{item.status === 'open'}}">{{item.statusText}}</text>
+                    <text class="pill-muted" wx:else>{{item.statusText}}</text>
+                </view>
+                <text class="card-summary">{{item.summary}}</text>
+                <view class="meta-row">
+                    <image class="meta-icon" src="/assets/icons/ic-calendar.png" mode="aspectFit" />
+                    <text class="meta-text">{{item.dateLabel}} {{item.weekday}} {{item.eventTime}}</text>
+                </view>
+                <view class="meta-row">
+                    <image class="meta-icon" src="/assets/icons/ic-location.png" mode="aspectFit" />
+                    <text class="meta-text">{{item.location}}</text>
+                </view>
+                <view class="card-footer">
+                    <view class="audience-chip">
+                        <image class="icon-sm" src="/assets/icons/ic-users.png" mode="aspectFit" />
+                        <text>{{item.audience}}</text>
+                    </view>
+                    <view class="detail-link">
+                        <text>查看详情</text>
+                        <image class="icon-sm" src="/assets/icons/ic-arrow.png" mode="aspectFit" />
+                    </view>
+                </view>
+            </view>
+        </view>
+
+        <view class="tips-card">
+            <text class="tips-title">报名流程</text>
+            <view class="tip-row">
+                <text class="tip-index">01</text>
+                <text class="tip-text">选择活动，查看时间、地点与参与人群</text>
+            </view>
+            <view class="tip-row">
+                <text class="tip-index">02</text>
+                <text class="tip-text">微信授权登录后填写报名信息</text>
+            </view>
+            <view class="tip-row">
+                <text class="tip-index">03</text>
+                <text class="tip-text">在报名记录里查看或取消报名</text>
+            </view>
+        </view>
+    </view>
+</view>

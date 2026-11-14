@@ -1,0 +1,92 @@
+<view class="page-shell page-shell-tab">
+    <view class="records-hero">
+        <view class="records-hero-text">
+            <text class="eyebrow">MY REGISTRATIONS</text>
+            <text class="records-title">我的报名</text>
+            <text class="records-subtitle">所有记录保存在云端，仅你本人可见</text>
+        </view>
+        <view class="signout-button" wx:if="{{authState === 'signed-in'}}" bindtap="handleSignOut">
+            <image class="icon-sm" src="/assets/icons/ic-logout.png" mode="aspectFit" />
+            <text>退出</text>
+        </view>
+    </view>
+
+    <view class="state-card" wx:if="{{authState === 'checking'}}">
+        <image class="state-icon" src="/assets/icons/ic-ticket.png" mode="aspectFit" />
+        <text class="state-title">正在加载</text>
+        <text class="state-description">正在确认登录状态与报名记录。</text>
+    </view>
+
+    <view wx:elif="{{authState === 'signed-out'}}">
+        <wx-login hint="登录后查看你提交过的报名记录" bind:signedin="onSignedIn" />
+    </view>
+
+    <block wx:else>
+        <view class="stats-card">
+            <view class="stat-item">
+                <text class="stat-value">{{stats.total}}</text>
+                <text class="stat-label">全部报名</text>
+            </view>
+            <view class="stat-divider"></view>
+            <view class="stat-item">
+                <text class="stat-value stat-value-active">{{stats.active}}</text>
+                <text class="stat-label">进行中</text>
+            </view>
+            <view class="stat-divider"></view>
+            <view class="stat-item">
+                <text class="stat-value">{{stats.cancelled}}</text>
+                <text class="stat-label">已取消</text>
+            </view>
+        </view>
+
+        <view class="state-card" wx:if="{{viewState === 'loading'}}">
+            <image class="state-icon" src="/assets/icons/ic-refresh.png" mode="aspectFit" />
+            <text class="state-title">正在读取报名记录</text>
+            <text class="state-description">请稍候。</text>
+        </view>
+
+        <view class="state-card" wx:elif="{{viewState === 'error'}}">
+            <image class="state-icon" src="/assets/icons/ic-refresh.png" mode="aspectFit" />
+            <text class="state-title">记录加载失败</text>
+            <text class="state-description">{{errorMsg}}</text>
+            <button class="retry-button" bindtap="handleRetry">重新加载</button>
+        </view>
+
+        <view class="state-card" wx:elif="{{viewState === 'empty'}}">
+            <image class="state-icon" src="/assets/icons/ic-empty.png" mode="aspectFit" />
+            <text class="state-title">还没有报名记录</text>
+            <text class="state-description">去活动首页挑一场感兴趣的活动吧。</text>
+            <button class="retry-button" bindtap="goHome">浏览活动</button>
+        </view>
+
+        <view wx:else>
+            <view class="record-card card" wx:for="{{records}}" wx:key="id">
+                <view class="record-head">
+                    <text class="record-title" data-activity-id="{{item.activityId}}" bindtap="goDetail">{{item.title}}</text>
+                    <text class="pill-success" wx:if="{{item.isActive}}">{{item.statusText}}</text>
+                    <text class="pill-muted" wx:else>{{item.statusText}}</text>
+                </view>
+                <view class="meta-row">
+                    <image class="meta-icon" src="/assets/icons/ic-calendar.png" mode="aspectFit" />
+                    <text class="meta-text">{{item.dateLabel}} {{item.eventTime}}</text>
+                </view>
+                <view class="meta-row">
+                    <image class="meta-icon" src="/assets/icons/ic-location.png" mode="aspectFit" />
+                    <text class="meta-text">{{item.location}}</text>
+                </view>
+                <view class="meta-row">
+                    <image class="meta-icon" src="/assets/icons/ic-phone.png" mode="aspectFit" />
+                    <text class="meta-text">{{item.name}} · {{item.phone}} · {{item.partySize}} 人</text>
+                </view>
+                <view class="meta-row" wx:if="{{item.remark !== ''}}">
+                    <image class="meta-icon" src="/assets/icons/ic-note.png" mode="aspectFit" />
+                    <text class="meta-text">备注：{{item.remark}}</text>
+                </view>
+                <view class="record-footer">
+                    <text class="record-time">提交于 {{item.createdAt}}</text>
+                    <view class="cancel-button" wx:if="{{item.isActive}}" data-id="{{item.id}}" bindtap="handleCancel">取消报名</view>
+                </view>
+            </view>
+        </view>
+    </block>
+</view>

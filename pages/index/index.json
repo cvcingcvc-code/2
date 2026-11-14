@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "活动首页",
+  "usingComponents": {
+    "wx-login": "../../components/wx-login/wx-login"
+  }
+}

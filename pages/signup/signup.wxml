@@ -1,0 +1,106 @@
+<view class="page-shell">
+    <view class="state-card" wx:if="{{authState === 'checking'}}">
+        <image class="state-icon" src="/assets/icons/ic-ticket.png" mode="aspectFit" />
+        <text class="state-title">正在准备报名</text>
+        <text class="state-description">正在确认活动信息与登录状态。</text>
+    </view>
+
+    <view class="state-card" wx:elif="{{authState === 'error'}}">
+        <image class="state-icon" src="/assets/icons/ic-refresh.png" mode="aspectFit" />
+        <text class="state-title">暂时无法报名</text>
+        <text class="state-description">{{loadError}}</text>
+        <button class="retry-button" bindtap="handleRetry">重新加载</button>
+    </view>
+
+    <view wx:elif="{{authState === 'signed-out'}}">
+        <view class="form-hero">
+            <text class="eyebrow">SIGN UP</text>
+            <text class="form-hero-title">在线报名</text>
+            <text class="form-hero-subtitle">先完成微信授权登录，再填写报名信息</text>
+        </view>
+        <wx-login hint="登录后即可报名，报名信息仅你本人可见" bind:signedin="onSignedIn" />
+    </view>
+
+    <view wx:elif="{{success}}">
+        <view class="success-card">
+            <image class="success-icon" src="/assets/icons/ic-check.png" mode="aspectFit" />
+            <text class="success-title">报名成功</text>
+            <text class="success-subtitle">已保存到云端，可在报名记录中随时查看</text>
+            <view class="success-divider"></view>
+            <view class="success-row">
+                <text class="success-label">活动</text>
+                <text class="success-value">{{activity.title}}</text>
+            </view>
+            <view class="success-row">
+                <text class="success-label">时间</text>
+                <text class="success-value">{{activity.dateLabel}} {{activity.eventTime}}</text>
+            </view>
+            <view class="success-row">
+                <text class="success-label">报名人</text>
+                <text class="success-value">{{successName}}</text>
+            </view>
+            <view class="success-row">
+                <text class="success-label">手机号</text>
+                <text class="success-value">{{successPhone}}</text>
+            </view>
+            <view class="success-row">
+                <text class="success-label">参加人数</text>
+                <text class="success-value">{{successPartySize}} 人</text>
+            </view>
+        </view>
+        <button class="primary-button success-primary" bindtap="goRecords">查看报名记录</button>
+        <button class="ghost-button success-secondary" bindtap="goHome">返回活动首页</button>
+    </view>
+
+    <block wx:else>
+        <view class="form-hero">
+            <text class="eyebrow">SIGN UP</text>
+            <text class="form-hero-title">填写报名信息</text>
+            <text class="form-hero-subtitle">请填写真实信息，便于活动当天联系与签到</text>
+        </view>
+
+        <view class="activity-strip card">
+            <image class="strip-icon" src="/assets/icons/ic-ticket.png" mode="aspectFit" />
+            <view class="strip-body">
+                <text class="strip-title">{{activity.title}}</text>
+                <text class="strip-meta">{{activity.dateLabel}} {{activity.eventTime}} · {{activity.location}}</text>
+            </view>
+        </view>
+
+        <view class="form-card card">
+            <view class="error-banner" wx:if="{{formError !== ''}}">
+                <text class="error-banner-text">{{formError}}</text>
+            </view>
+
+            <view class="field-card {{fieldErrors.name !== '' ? 'field-card-error' : ''}}">
+                <text class="field-label">姓名 <text class="required">*</text></text>
+                <input class="field-input" placeholder="请输入真实姓名" value="{{name}}" data-field="name" bindinput="handleInput" maxlength="20" />
+                <text class="field-error" wx:if="{{fieldErrors.name !== ''}}">{{fieldErrors.name}}</text>
+            </view>
+
+            <view class="field-card {{fieldErrors.phone !== '' ? 'field-card-error' : ''}}">
+                <text class="field-label">手机号 <text class="required">*</text></text>
+                <input class="field-input" type="number" placeholder="请输入 11 位手机号" value="{{phone}}" data-field="phone" bindinput="handleInput" maxlength="11" />
+                <text class="field-error" wx:if="{{fieldErrors.phone !== ''}}">{{fieldErrors.phone}}</text>
+            </view>
+
+            <view class="field-card">
+                <text class="field-label">参加人数</text>
+                <picker mode="selector" range="{{partyOptions}}" value="{{partyIndex}}" bindchange="handlePartyChange">
+                    <view class="picker-value">
+                        <text>{{partySize}} 人</text>
+                        <image class="icon-sm" src="/assets/icons/ic-arrow.png" mode="aspectFit" />
+                    </view>
+                </picker>
+            </view>
+
+            <view class="field-card">
+                <text class="field-label">补充说明</text>
+                <textarea class="field-textarea" placeholder="可选，例如同行伙伴、饮食偏好等" value="{{remark}}" data-field="remark" bindinput="handleInput" maxlength="100" />
+            </view>
+
+            <text class="field-hint">提交后即表示同意活动方将以上信息用于本次活动的联系与签到。</text>
+            <button class="primary-button submit-button" bindtap="handleSubmit" loading="{{submitting}}" disabled="{{submitting}}">确认报名</button>
+        </view>
+    </block>
+</view>

@@ -1,0 +1,84 @@
+<view class="page-shell with-bottom-bar">
+    <view class="state-card" wx:if="{{viewState === 'loading'}}">
+        <image class="state-icon" src="/assets/icons/ic-ticket.png" mode="aspectFit" />
+        <text class="state-title">正在加载活动详情</text>
+        <text class="state-description">活动信息保存在云端，马上就好。</text>
+    </view>
+
+    <view class="state-card" wx:elif="{{viewState === 'error'}}">
+        <image class="state-icon" src="/assets/icons/ic-refresh.png" mode="aspectFit" />
+        <text class="state-title">加载失败</text>
+        <text class="state-description">{{errorMsg}}</text>
+        <button class="retry-button" bindtap="handleRetry">重新加载</button>
+    </view>
+
+    <view class="state-card" wx:elif="{{viewState === 'empty'}}">
+        <image class="state-icon" src="/assets/icons/ic-empty.png" mode="aspectFit" />
+        <text class="state-title">活动不存在</text>
+        <text class="state-description">这场活动可能已经下线，返回首页看看其他活动。</text>
+    </view>
+
+    <block wx:else>
+        <view class="cover-wrap">
+            <image wx:if="{{activity.coverUrl !== ''}}" class="cover-image" src="{{activity.coverUrl}}" mode="aspectFill" />
+            <view wx:else class="cover-placeholder">
+                <image class="cover-mark" src="/assets/icons/ic-image.png" mode="aspectFit" />
+                <text class="cover-placeholder-text">活动封面</text>
+            </view>
+            <view class="cover-tag">{{activity.tag}}</view>
+            <view class="cover-action" wx:if="{{signedIn}}" bindtap="chooseCover">
+                <image class="icon-sm" src="/assets/icons/ic-image.png" mode="aspectFit" />
+                <text>{{uploading ? '上传中' : '设置封面'}}</text>
+            </view>
+        </view>
+
+        <view class="info-card card">
+            <view class="row-between">
+                <text class="detail-title">{{activity.title}}</text>
+                <text class="pill" wx:if="{{activity.status === 'open'}}">{{activity.statusText}}</text>
+                <text class="pill-muted" wx:else>{{activity.statusText}}</text>
+            </view>
+            <text class="detail-summary">{{activity.summary}}</text>
+            <view class="divider"></view>
+            <view class="meta-row">
+                <image class="meta-icon" src="/assets/icons/ic-calendar.png" mode="aspectFit" />
+                <text class="meta-text">{{activity.fullDateLabel}} {{activity.weekday}} {{activity.eventTime}}</text>
+            </view>
+            <view class="meta-row">
+                <image class="meta-icon" src="/assets/icons/ic-location.png" mode="aspectFit" />
+                <text class="meta-text">{{activity.location}}</text>
+            </view>
+            <view class="meta-row">
+                <image class="meta-icon" src="/assets/icons/ic-users.png" mode="aspectFit" />
+                <text class="meta-text">参与人群：{{activity.audience}}</text>
+            </view>
+            <view class="meta-row">
+                <image class="meta-icon" src="/assets/icons/ic-ticket.png" mode="aspectFit" />
+                <text class="meta-text">活动名额：{{activity.capacity}} 人</text>
+            </view>
+        </view>
+
+        <view class="content-card card">
+            <text class="section-title">活动介绍</text>
+            <view class="desc-row" wx:for="{{activity.descriptionLines}}" wx:key="*this">
+                <view class="desc-dot"></view>
+                <text class="desc-text">{{item}}</text>
+            </view>
+        </view>
+
+        <view class="notice-card">
+            <view class="notice-head">
+                <image class="icon-sm" src="/assets/icons/ic-note.png" mode="aspectFit" />
+                <text class="notice-title">报名须知</text>
+            </view>
+            <text class="notice-line">报名信息仅用于本次活动联系与签到。</text>
+            <text class="notice-line">请填写可联系到你的手机号，活动变动会提前通知。</text>
+            <text class="notice-line">行程有变可在「报名记录」中自行取消。</text>
+        </view>
+    </block>
+</view>
+
+<view class="bottom-bar" wx:if="{{viewState === 'ready'}}">
+    <button class="ghost-button" wx:if="{{hasRegistered}}" bindtap="goRecords">查看报名记录</button>
+    <button class="primary-button" wx:else bindtap="goSignup">立即报名</button>
+</view>

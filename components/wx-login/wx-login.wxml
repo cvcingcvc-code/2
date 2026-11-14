@@ -1,0 +1,14 @@
+<view class="login-card">
+    <view class="login-head">
+        <view class="login-icon-wrap">
+            <image class="login-icon" src="/assets/icons/ic-shield.png" mode="aspectFit" />
+        </view>
+        <view class="login-head-text">
+            <text class="login-title">微信授权登录</text>
+            <text class="login-hint">{{hint}}</text>
+        </view>
+    </view>
+    <button class="login-button" bindtap="handleLogin" loading="{{loggingIn}}" disabled="{{loggingIn}}">使用微信账号登录</button>
+    <text class="login-error" wx:if="{{loginError !== ''}}">{{loginError}}</text>
+    <text class="login-foot">仅用于识别你的报名记录，不会获取微信昵称和头像</text>
+</view>
